@@ -1,6 +1,6 @@
 # ArduinoDriver
 
-A .NET library to connect, drive and debug an Arduino through a simple and highly Arduino syntax compatible request / response protocol running over the serial (USB) connection.
+A cross-platform .NET library to connect, drive and debug an Arduino through a simple and highly Arduino syntax compatible request / response protocol running over the serial (USB) connection.
 
 ![ArduinoDriver](https://github.com/christophediericx/ArduinoDriver/blob/master/Images/ArduinoDriver.png)
 
@@ -47,7 +47,7 @@ Protip: Use git submodule
 git submodule add https://github.com/dankrusi/ArduinoDriver.git ArduinoDriver
 ```
 
-Install the INO sketch on your arduino device.
+Install the ArduinoListener sketch on your arduino device: https://github.com/dankrusi/ArduinoDriver/blob/master/Source/ArduinoDriver/ArduinoListener/ArduinoListener.ino
 
 ## Dependencies ##
 
@@ -61,12 +61,43 @@ The library channels log messages (in varying levels, from Info to Trace) via NL
 
 This sample project uses the library above to blink the arduino's built-in LED on pin 13.
 
-Don't forget to change the following lines if you have another Arduino model attached:
+Don't forget to change the model and port to match your device.
 
 ```csharp
-// ----------> CHANGE THIS!
-private const ArduinoModel AttachedArduino = ArduinoModel.Mega2560;
-private const string AttachedPort = "/dev/ttyACM0";
+using System.Threading;
+using ArduinoDriver.SerialProtocol;
+
+namespace ArduinoDriver.Samples.Blink
+{
+	/// <summary>
+	/// This is a very simple test program that makes the arduino blink using the digital pin 13.
+	/// </summary>
+	internal class Program
+	{
+		// ----------> CHANGE THIS!
+		private const ArduinoModel AttachedArduino = ArduinoModel.Mega2560;
+		private const string AttachedPort = "/dev/ttyACM0";
+
+		private const int DigitalPinBlink = 13;
+
+
+		private static void Main(string[] args)
+		{
+			using (var driver = new ArduinoDriver(AttachedArduino, AttachedPort))
+			{
+				driver.Send(new PinModeRequest(DigitalPinBlink, PinMode.Output));
+				for (var i = 0; i < 20; i++)
+				{
+					driver.Send(new DigitalWriteRequest(DigitalPinBlink, DigitalValue.High));
+					Thread.Sleep(1000);
+					driver.Send(new DigitalWriteRequest(DigitalPinBlink, DigitalValue.Low));
+					Thread.Sleep(1000);
+				}
+			}
+
+		}
+	}
+}
 ```
 
 ## Sample Code Project: Super Mario Bros "Underworld" theme ##
