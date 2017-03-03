@@ -85,10 +85,6 @@
     <None Include="app.config" />
     <None Include="ArduinoDriver.nuspec" />
     <None Include="ArduinoListener\ArduinoListener.ino" />
-    <EmbeddedResource Include="ArduinoListener\ArduinoListener.ino.UnoR3.hex" />
-    <EmbeddedResource Include="ArduinoListener\ArduinoListener.ino.Mega2560.hex" />
-    <EmbeddedResource Include="ArduinoListener\ArduinoListener.ino.NanoR3.hex" />
-    <EmbeddedResource Include="ArduinoListener\ArduinoListener.ino.Micro.hex" />
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
