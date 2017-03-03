@@ -64,11 +64,16 @@ namespace ArduinoDriver
         {
             var bytes = new byte[] {0xfb, command, length};
             serialPort.Write(bytes, 0, bytes.Length);
+			serialPort.Flush();
             var responseBytes = ReadCurrentReceiveBuffer(3);
-            return responseBytes.Length == 3
+			var ret = responseBytes.Length == 3
                    && responseBytes[0] == bytes[2]
                    && responseBytes[1] == bytes[1]
                    && responseBytes[2] == bytes[0];
+			if(ret == false) {
+				var x = "";
+			}
+			return ret;
         }
 
         internal ArduinoResponse Send(ArduinoRequest request, int maxSendRetries = MaxSendRetries)

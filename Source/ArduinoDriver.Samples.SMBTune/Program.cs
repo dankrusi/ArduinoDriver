@@ -1,6 +1,5 @@
 ﻿using System.Threading;
 using ArduinoDriver.SerialProtocol;
-using ArduinoUploader.Hardware;
 
 namespace ArduinoDriver.Samples.SMBTune
 {
@@ -19,8 +18,9 @@ namespace ArduinoDriver.Samples.SMBTune
     /// </summary>
     internal class Program
     {
-        // ----------> CHANGE THIS!
-        private const ArduinoModel AttachedArduino = ArduinoModel.UnoR3;
+		// ----------> CHANGE THIS!
+		private const ArduinoModel AttachedArduino = ArduinoModel.Mega2560;
+		private const string AttachedPort = "/dev/ttyACM0";
 
         private const int DigitalPinBuzzer = 8;
 
@@ -58,7 +58,7 @@ namespace ArduinoDriver.Samples.SMBTune
 
         private static void Main(string[] args)
         {
-            using (var driver = new ArduinoDriver(AttachedArduino, true))
+			using (var driver = new ArduinoDriver(AttachedArduino, AttachedPort))
             {
                 for (var i = 0; i < melody.Length; i++)
                 {

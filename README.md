@@ -1,21 +1,17 @@
 # ArduinoDriver
 
-A .NET library to easily connect, drive and debug an Arduino through a simple and highly Arduino syntax compatible request / response protocol running over the serial (USB) connection.
+A .NET library to connect, drive and debug an Arduino through a simple and highly Arduino syntax compatible request / response protocol running over the serial (USB) connection.
 
 ![ArduinoDriver](https://github.com/christophediericx/ArduinoDriver/blob/master/Images/ArduinoDriver.png)
 
 ## Summary ##
 A two-line snippet can illustrate some of the library's features:
 ```csharp
-var driver = new ArduinoDriver(ArduinoModel.UnoR3, true);
+var driver = new ArduinoDriver(ArduinoModel.Mega2560, "/dev/ttyACM0");
 driver.Send(new ToneRequest(8, 200, 1000));
 ```
 
-* This creates an ArduinoDriver for a specific Arduino Model (in this case an Uno).
-
-* The relevant COM port is autodetected (although a constructor overload for specifying the port exists).
-
-* The second parameter to the constructor (*autoBootstrap*) enables automated deployment of our [protocol listener](Source/ArduinoDriver/ArduinoListener/ArduinoListener.ino) onto the Arduino (if necessary). This means you don't have to compile / deploy anything on the Arduino itself in order to start using this library (the library uses the related [ArduinoSketchUploader](https://github.com/christophediericx/ArduinoSketchUploader) library to achieve this).
+* This creates an ArduinoDriver for a specific Arduino Model (in this case an Uno) at it's port.
 
 * Use the *Send* method on the driver in order to send a message to the Arduino, and receive a response. Most of the typical Arduino library methods have completely analogous request / counterparts:
 
@@ -35,30 +31,43 @@ The protocol itself supports:
 
 The library has been tested with the following configurations:
 
-| Arduino Model | MCU           | Bootloader protocol |
-| ------------- |:-------------:| -------------------:|
-| Mega 2560     | ATMega2560    | STK500v2            |
-| Micro         | ATMega32U4    | AVR109              |
-| Nano (R3)     | ATMega328P    | STK500v1            |
-| Uno (R3)      | ATMega328P    | STK500v1            |
+| Arduino Model | MCU           |
+| ------------- |:-------------:|
+| Mega 2560     | ATMega2560    |
 
 > *If you have a need for this library to run on another Arduino model, feel free to open an issue on GitHub, it should be relatively straightforward to add support (for most).*
 
 ## How to use the .NET library ##
 
-[![NuGet version](https://badge.fury.io/nu/ArduinoDriver.svg)](https://badge.fury.io/nu/ArduinoDriver)
+Download the source and add the project to your solution. There is no nuget package as this is a fork.
 
-Link the following nuget package in your project in order to use the ArduinoDriver: https://www.nuget.org/packages/ArduinoDriver/
-
-Alternatively, install the package using the nuget package manager console:
+Protip: Use git submodule
 
 ```
-Install-Package ArduinoDriver
+git submodule add https://github.com/dankrusi/ArduinoDriver.git ArduinoDriver
 ```
+
+Install the INO sketch on your arduino device.
+
+## Dependencies ##
+
+The only dependency is NLog. This is how the fork https://github.com/dankrusi/ArduinoDriver varies from the original https://github.com/christophediericx/ArduinoDriver project. No need to compile a 3rd party SerialPortStream library, and the project will build and run out-of-the box on Ubuntu 14.04+, Windows, and OS X.
 
 ## Logging ##
 
 The library channels log messages (in varying levels, from Info to Trace) via NLog. Optionally, add a nuget NLog dependency (and configuration file) in any project that uses ArduinoDriver in order to redirect these log messages to preferred log targets.
+
+## Sample Code Project: Blink ##
+
+This sample project uses the library above to blink the arduino's built-in LED on pin 13.
+
+Don't forget to change the following lines if you have another Arduino model attached:
+
+```csharp
+// ----------> CHANGE THIS!
+private const ArduinoModel AttachedArduino = ArduinoModel.Mega2560;
+private const string AttachedPort = "/dev/ttyACM0";
+```
 
 ## Sample Code Project: Super Mario Bros "Underworld" theme ##
 
@@ -66,9 +75,10 @@ This sample project uses the library above to play this classic retro tune on an
 
 One pin of the buzzer should be connected to digital pin 8. The other pin should be connected to GND.
 
-The sample code is configured for an UNO. Don't forget to change the following line if you have another Arduino model attached:
+Don't forget to change the following lines if you have another Arduino model attached:
 
 ```csharp
 // ----------> CHANGE THIS!
-private const ArduinoModel AttachedArduino = ArduinoModel.UnoR3;
+private const ArduinoModel AttachedArduino = ArduinoModel.Mega2560;
+private const string AttachedPort = "/dev/ttyACM0";
 ```

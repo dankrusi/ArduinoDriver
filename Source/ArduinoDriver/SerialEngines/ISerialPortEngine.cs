@@ -12,5 +12,6 @@ namespace ArduinoDriver.SerialEngines
         void Close();
         void Write(byte[] buffer, int offset, int count);
         int Read(byte[] buffer, int offset, int count);
+		void Flush();
     }
 }

@@ -1,5 +1,4 @@
-﻿using ArduinoUploader.Hardware;
-
+﻿
 namespace ArduinoDriver
 {
     internal class ArduinoDriverConfiguration

@@ -4,8 +4,8 @@
  * Version 1.0.
  */
 
-const long BAUD_RATE = 115200;
-const unsigned int SYNC_TIMEOUT = 250;
+const long BAUD_RATE = 115200; // 115200   57600
+const unsigned int SYNC_TIMEOUT = 1250;
 const unsigned int READ_REQUESTPAYLOAD_TIMEOUT = 1000;
 const unsigned int SYNC_REQUEST_LENGTH = 4;
 const unsigned int CMD_HANDSHAKE_LENGTH = 3;
@@ -110,7 +110,7 @@ void loop() {
 
   // Sanity check of checksum + command and length values, so that we can trust the entire packet.
   if (c0 != fletcherByte1 || c1 != fletcherByte2 || commandByte != data[0] || lengthByte != data[1]) {
-    WriteError();
+    WriteError(1);
     return;
   }
 
@@ -203,7 +203,7 @@ void loop() {
       Serial.flush();
       break;
     default:
-      WriteError();
+      WriteError(2);
       break;
   }
 }
@@ -213,14 +213,17 @@ bool expectNumberOfBytesToArrive(byte numberOfBytes, unsigned long timeout) {
   while ((Serial.available() < numberOfBytes) && ((millis() - timeoutStartTicks) < timeout)) { ; }
   if (Serial.available() < numberOfBytes) {
     // Unable to get sufficient bytes, perhaps one was lost in transportation? Write out three error marker bytes.
-    WriteError();
+    WriteError(3+numberOfBytes+Serial.available());
     return false;
   }  
   return true;
 }
 
-void WriteError() {
-  for (int i = 0; i < 3; i++) { Serial.write(ERROR_MARKER); }
+void WriteError(int errorType) {
+  // In worst-case scenario error type can be used for debugging
+  Serial.write(ERROR_MARKER);
+  Serial.write(ERROR_MARKER);
+  Serial.write(ERROR_MARKER);
   Serial.flush();
 }
 
